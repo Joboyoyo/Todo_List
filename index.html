@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+    .container {
+      text-align: center;
+      background-color: white;
+      padding: 50px;
+      border-radius: 10px;
+    }
+    input[type="text"] {
+      font-size: 16px;
+      padding: 10px;
+      width: 300px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      font-size: 16px;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 10px;
+      transition: transform 0.1s;
+    }
+    button:hover {
+      background-color: #0056B3;
+    }
+    button:active {
+      transform: scale(1.1);
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+      width: 400px;
+      margin: 30px auto;
+      text-align: left;
+    }
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 18px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border: 1px solid #eee;
+      margin-bottom: 5px;
+      border-radius: 5px;
+    }
+    .delete-btn {
+      background-color: #FF4136;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      margin-left: 10px;
+      transition: transform 0.1s;
+    }
+    .delete-btn:hover {
+      background-color: #FF6347;
+    }
+    .delete-btn:active {
+      transform: scale(1.1);
+    }
+    .nothing {
+      font-size: 18px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>To-Do List</h1>
+    <input type="text" id="taskInput" placeholder="Enter a task...">
+    <button onclick="addTask()">Add Task</button>
+    <ul id="taskList"></ul>
+  </div>
+
+  <script>
+    const taskInput = document.getElementById('taskInput');
+    const taskList = document.getElementById('taskList');
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    function addTask() {
+      const task = taskInput.value.trim();
+      if (task) {
+        tasks.push(task);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        taskInput.value = '';
+        renderTasks();
+      }
+    }
+
+    function removeTask(index) {
+      tasks.splice(index, 1);
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+      renderTasks();
+    }
+
+    function renderTasks() {
+      taskList.innerHTML = '';
+      if (tasks.length === 0) {
+        const nothing = document
+        .createElement('p');
+        nothing.className = 'nothing';
+        nothing.textContent = 'You have no tasks!';
+        taskList.appendChild(nothing);
+      } else {
+        tasks.forEach((task, index) => {
+          const li = document.createElement('li');
+          const taskText = document.createElement('span');
+          taskText.textContent = task;
+
+          const deleteBtn = document.createElement('button');
+          deleteBtn.textContent = 'Delete';
+          deleteBtn.className = 'delete-btn';
+          deleteBtn.onclick = (e) => {
+            e.stopPropagation();
+            removeTask(index);
+          };
+
+          li.appendChild(taskText);
+          li.appendChild(deleteBtn);
+          taskList.appendChild(li);
+        });
+      }
+    }
+
+    renderTasks();
+  </script>
+</body>
+</html>
